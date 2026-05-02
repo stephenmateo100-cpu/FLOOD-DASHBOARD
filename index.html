@@ -333,7 +333,7 @@ setInterval(updateClock,1000);updateClock();
 function addSmsLog(type,msg){
   document.getElementById('smsEmpty').style.display='none';
   const el=document.getElementById('smsList');
-  const rcpt='CDRRMO Officer, Barangay Captain, City Mayor's Office, OCD Region 02';
+  const rcpt='CDRRMO Officer, Barangay Captain, City Mayor\'s Office, OCD Region 02';
   const item=document.createElement('div');
   item.className='sms-item';
   item.innerHTML=`
