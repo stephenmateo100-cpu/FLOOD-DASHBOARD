@@ -457,7 +457,7 @@ function initChart(){
 
 async function fetchData(){
   try{
-    const r=await fetch(DB_URL+'/sensor.json?auth='+DB_SECRET);
+    const r=await fetch(DB_URL+'/sensor.json);
     if(!r.ok)throw new Error(r.status);
     const d=await r.json();
     if(!d)return;
