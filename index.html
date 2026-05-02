@@ -398,13 +398,13 @@ function update(d){
     ai2.innerHTML='&#9888;';
     document.getElementById('amsgTitle').textContent='FLOOD ALERT — Immediate Action Required';
     document.getElementById('amsgDetail').textContent='River level has reached critical threshold ('+river.toFixed(1)+' cm). Gate operation initiated. Evacuate low-lying areas immediately.';
-    abSms.style.display='flex';
+    abSms.style.display=(state==='GATE_OPEN'||state==='PUMPING')?'flex':'none';
   } else if(river>=RSAFE||basin>=BFULL){
     ab.className='alert-banner ab-warn';
     ai2.innerHTML='&#9888;';
     document.getElementById('amsgTitle').textContent='WARNING — Elevated Water Levels Detected';
     document.getElementById('amsgDetail').textContent='River: '+river.toFixed(1)+' cm | Basin: '+basin.toFixed(1)+' cm. Levels are rising. Authorities are on standby.';
-    abSms.style.display='flex';
+    abSms.style.display=(state==='GATE_OPEN'||state==='PUMPING')?'flex':'none';
   } else {
     ab.className='alert-banner ab-safe';
     ai2.innerHTML='&#9989;';
@@ -413,18 +413,16 @@ function update(d){
     abSms.style.display='none';
   }
 
-  if(alertType!==lastAlertType){
-    if(alertType==='flood') addSmsLog('flood','FLOOD ALERT: River='+river.toFixed(1)+'cm exceeded critical threshold. Gate opened. Evacuate immediately.');
-    else if(alertType==='warn') addSmsLog('warn','WARNING: River='+river.toFixed(1)+'cm, Basin='+basin.toFixed(1)+'cm. Water levels rising. Authorities on standby.');
-    else if(lastAlertType!=='safe') addSmsLog('safe','ALL CLEAR: Water levels returned to safe range. River='+river.toFixed(1)+'cm, Basin='+basin.toFixed(1)+'cm.');
-    lastAlertType=alertType;
-  }
-
+  // SMS sent only TWICE per cycle:
+  // 1. BABALA — when river reaches flood level (gate opens)
+  // 2. LIGTAS — when river is safe and pump activates
   if(state!==lastState&&lastState!==''){
-    if(state==='GATE_OPEN') addSmsLog('flood','SYSTEM ALERT: Flood gate has been automatically opened.');
-    if(state==='PUMPING')   addSmsLog('warn','SYSTEM ALERT: Basin pump activated. Drainage in progress.');
-    if(state==='DONE')      addSmsLog('safe','SYSTEM ALERT: Pump deactivated. Basin successfully drained.');
-    if(state==='NORMAL')    addSmsLog('safe','SYSTEM ALERT: System returned to normal operations.');
+    if(state==='GATE_OPEN'){
+      addSmsLog('flood','BABALA: Mataas na ang tubig sa ilog! Binuksan na ang detention basin. Manatiling alerto.');
+    }
+    if(state==='PUMPING'){
+      addSmsLog('safe','LIGTAS: Bumalik na sa normal ang lebel ng tubig sa ilog. Sarado na ang detention basin.');
+    }
   }
   lastState=state;
 
